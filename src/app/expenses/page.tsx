@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { PlusCircle, Search, Calendar, Edit, Trash2 } from 'lucide-react'
+import { PlusCircle, Search, Calendar, Edit, Trash2, ArrowLeft } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import DateRangePicker from '@/components/DateRangePicker'
 import ExportButton from '@/components/ExportButton'
@@ -65,6 +65,12 @@ export default function Expenses() {
 
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
+          <div className="mb-6">
+            <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Link>
+          </div>
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold text-gray-900">Expenses</h2>
             <div className="flex space-x-3">
@@ -92,7 +98,7 @@ export default function Expenses() {
                       placeholder="Search expenses..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-800"
                     />
                   </div>
                 </div>

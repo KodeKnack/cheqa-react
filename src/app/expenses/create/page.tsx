@@ -118,9 +118,9 @@ export default function CreateExpense() {
                         required
                         value={formData.categoryId}
                         onChange={handleChange}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-800"
                       >
-                        <option value="">Select Category</option>
+                        <option value="" disabled hidden>Select Category</option>
                         {categories.map((category) => (
                           <option key={category.id} value={category.id}>
                             {category.name}
@@ -139,9 +139,9 @@ export default function CreateExpense() {
                         required
                         value={formData.paymentMethodId}
                         onChange={handleChange}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-800"
                       >
-                        <option value="">Select Payment Method</option>
+                        <option value="" disabled hidden>Select Payment Method</option>
                         {paymentMethods.map((method) => (
                           <option key={method.id} value={method.id}>
                             {method.name}

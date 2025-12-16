@@ -7,12 +7,12 @@ interface MonthlyTrendProps {
 }
 
 export default function MonthlyTrend({ expenses }: MonthlyTrendProps) {
-  // Calculate monthly spending for last 6 months
+  // Calculate monthly spending for the entire year
   const monthlyData = []
   const now = new Date()
   
-  for (let i = 5; i >= 0; i--) {
-    const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
+  for (let i = 0; i < 12; i++) {
+    const date = new Date(now.getFullYear(), i, 1)
     const monthName = date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
     
     const monthExpenses = expenses.filter(expense => {

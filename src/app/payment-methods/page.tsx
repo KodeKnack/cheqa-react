@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { PlusCircle, CreditCard } from 'lucide-react'
+import { PlusCircle, CreditCard, ArrowLeft } from 'lucide-react'
 import { useStore } from '@/lib/store'
 
 export default function PaymentMethods() {
@@ -36,6 +36,12 @@ export default function PaymentMethods() {
 
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
+          <div className="mb-6">
+            <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Link>
+          </div>
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold text-gray-900">Payment Methods</h2>
             <Link
