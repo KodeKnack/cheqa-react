@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cheqa React - Expense Tracker
 
-## Getting Started
+A modern React/Next.js expense tracking application built with TypeScript, Tailwind CSS, and Prisma.
 
-First, run the development server:
+## Features
+
+- **Dashboard**: Overview of total expenses, monthly expenses, and analytics
+- **Expense Management**: Full CRUD operations for expenses with filtering
+- **Category Management**: Organize expenses into categories
+- **Payment Method Management**: Track different payment methods
+- **Search & Filter**: Search expenses and filter by date ranges
+- **Responsive Design**: Tailwind CSS responsive interface
+- **TypeScript**: Full type safety throughout the application
+
+## Tech Stack
+
+- **Frontend**: Next.js 14, React 18, TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: SQLite with Prisma ORM
+- **Icons**: Lucide React
+- **Forms**: React Hook Form with Zod validation
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone <your-repo-url> cheqa-react
+cd cheqa-react
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Database Setup
+
+```bash
+# Generate Prisma client
+npx prisma generate
+
+# Run database migrations
+npx prisma migrate dev --name init
+
+# Seed the database (optional)
+npx prisma db seed
+```
+
+### 4. Start Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Access the application at: http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+cheqa-react/
+├── src/
+│   ├── app/
+│   │   ├── expenses/
+│   │   │   ├── create/
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx
+│   │   ├── categories/
+│   │   ├── payment-methods/
+│   │   └── page.tsx (Dashboard)
+│   ├── lib/
+│   │   └── prisma.ts
+│   └── components/
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+└── prisma.config.ts
+```
 
-## Learn More
+## Database Schema
 
-To learn more about Next.js, take a look at the following resources:
+### Users Table
+- `id` (String, Primary Key)
+- `email` (String, Unique)
+- `name` (String, Optional)
+- `createdAt`, `updatedAt` (DateTime)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Categories Table
+- `id` (String, Primary Key)
+- `name` (String)
+- `createdAt`, `updatedAt` (DateTime)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Payment Methods Table
+- `id` (String, Primary Key)
+- `name` (String)
+- `createdAt`, `updatedAt` (DateTime)
 
-## Deploy on Vercel
+### Expenses Table
+- `id` (String, Primary Key)
+- `description` (String)
+- `amount` (Float)
+- `expenseDate` (DateTime)
+- `userId` (String, Foreign Key)
+- `categoryId` (String, Foreign Key)
+- `paymentMethodId` (String, Foreign Key)
+- `createdAt`, `updatedAt` (DateTime)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Available Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npx prisma studio` - Open Prisma Studio (database GUI)
+- `npx prisma migrate dev` - Run database migrations
+
+## Deployment
+
+The application can be deployed to:
+- **Vercel** (recommended for Next.js)
+- **Netlify**
+- **Railway**
+- **AWS Amplify**
+
+## License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
