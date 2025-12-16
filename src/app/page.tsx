@@ -1,11 +1,28 @@
 'use client'
 
 import Link from 'next/link'
-import { PlusCircle, TrendingUp, Calendar, CreditCard } from 'lucide-react'
+import { PlusCircle, TrendingUp, Calendar, CreditCard, User, LogOut } from 'lucide-react'
 import { useStore } from '@/lib/store'
+import { useSession, signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function Dashboard() {
   const { expenses, categories } = useStore()
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin')
+    }
+  }, [status, router])
+  
+  if (status === 'loading') {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
+  
+  if (!session) return null
   
   const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0)
   const thisMonth = new Date()
@@ -46,6 +63,17 @@ export default function Dashboard() {
               <Link href="/payment-methods" className="text-gray-700 hover:text-gray-900">
                 Payment Methods
               </Link>
+              <div className="flex items-center space-x-2">
+                <User className="h-5 w-5 text-gray-600" />
+                <span className="text-gray-700">{session.user?.name || session.user?.email}</span>
+                <button
+                  onClick={() => signOut()}
+                  className="text-gray-700 hover:text-gray-900 flex items-center space-x-1"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -54,7 +82,7 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">Welcome back!</h2>
+            <h2 className="text-3xl font-bold text-gray-900">Welcome back, {session.user?.name?.split(' ')[0] || 'User'}!</h2>
             <p className="text-gray-600">Here's your expense overview</p>
           </div>
 
