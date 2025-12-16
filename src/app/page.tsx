@@ -110,8 +110,10 @@ export default function Dashboard() {
                 Payment Methods
               </Link>
               <div className="flex items-center space-x-2 border-l pl-4">
-                <User className="h-5 w-5 text-gray-600" />
-                <span className="text-gray-700">{user.name || user.email}</span>
+                <Link href="/profile" className="flex items-center space-x-1 text-gray-700 hover:text-gray-900">
+                  <User className="h-5 w-5 text-gray-600" />
+                  <span className="text-gray-700">{user.name || user.email}</span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="text-gray-700 hover:text-gray-900 flex items-center space-x-1"
