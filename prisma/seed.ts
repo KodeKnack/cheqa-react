@@ -16,11 +16,9 @@ async function main() {
   ]
 
   for (const name of categories) {
-    await prisma.category.upsert({
-      where: { name },
-      update: {},
-      create: { name }
-    })
+    try {
+      await prisma.category.create({ data: { name } })
+    } catch {}
   }
 
   // Create payment methods
@@ -34,22 +32,12 @@ async function main() {
   ]
 
   for (const name of paymentMethods) {
-    await prisma.paymentMethod.upsert({
-      where: { name },
-      update: {},
-      create: { name }
-    })
+    try {
+      await prisma.paymentMethod.create({ data: { name } })
+    } catch {}
   }
 
-  // Create a test user
-  await prisma.user.upsert({
-    where: { email: 'test@example.com' },
-    update: {},
-    create: {
-      email: 'test@example.com',
-      name: 'Test User'
-    }
-  })
+
 
   console.log('Database seeded successfully!')
 }

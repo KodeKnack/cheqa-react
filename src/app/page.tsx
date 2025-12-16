@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { PlusCircle, TrendingUp, Calendar, CreditCard, User, LogOut } from 'lucide-react'
+import { PlusCircle, TrendingUp, Calendar, CreditCard, User, LogOut } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -160,39 +161,51 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Recent Expenses
-              </h3>
-              <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                Your latest expense entries
-              </p>
+          {/* Analytics Section */}
+          {expenses.length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <SpendingChart expenses={expenses} categories={categories} />
+              <MonthlyTrend expenses={expenses} />
             </div>
-            <div className="border-t border-gray-200">
-              {recentExpenses.length === 0 ? (
-                <div className="px-4 py-5 sm:p-6 text-center text-gray-500">
-                  No expenses yet. <Link href="/expenses/create" className="text-blue-600 hover:text-blue-800">Add your first expense</Link>
-                </div>
-              ) : (
-                <ul className="divide-y divide-gray-200">
-                  {recentExpenses.map((expense) => {
-                    const category = categories.find(c => c.id === expense.categoryId)
-                    return (
-                      <li key={expense.id} className="px-4 py-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">{expense.description}</p>
-                            <p className="text-sm text-gray-500">{category?.name} • {new Date(expense.expenseDate).toLocaleDateString()}</p>
+          )}
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div className="bg-white shadow overflow-hidden sm:rounded-md">
+              <div className="px-4 py-5 sm:px-6">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                  Recent Expenses
+                </h3>
+                <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                  Your latest expense entries
+                </p>
+              </div>
+              <div className="border-t border-gray-200">
+                {recentExpenses.length === 0 ? (
+                  <div className="px-4 py-5 sm:p-6 text-center text-gray-500">
+                    No expenses yet. <Link href="/expenses/create" className="text-blue-600 hover:text-blue-800">Add your first expense</Link>
+                  </div>
+                ) : (
+                  <ul className="divide-y divide-gray-200">
+                    {recentExpenses.map((expense) => {
+                      const category = categories.find(c => c.id === expense.categoryId)
+                      return (
+                        <li key={expense.id} className="px-4 py-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">{expense.description}</p>
+                              <p className="text-sm text-gray-500">{category?.name} • {new Date(expense.expenseDate).toLocaleDateString()}</p>
+                            </div>
+                            <p className="text-sm font-medium text-gray-900">{formatCurrency(expense.amount)}</p>
                           </div>
-                          <p className="text-sm font-medium text-gray-900">{formatCurrency(expense.amount)}</p>
-                        </div>
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
+              </div>
             </div>
+            
+            <TopCategories expenses={expenses} categories={categories} />
           </div>
         </div>
       </div>

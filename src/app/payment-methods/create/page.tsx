@@ -11,9 +11,9 @@ export default function CreatePaymentMethod() {
   const { addPaymentMethod } = useStore()
   const [name, setName] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    addPaymentMethod({ name })
+    await addPaymentMethod({ name })
     router.push('/payment-methods')
   }
 
