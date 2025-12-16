@@ -1,11 +1,68 @@
 'use client'
 
 import Link from 'next/link'
-import { PlusCircle, TrendingUp, Calendar, CreditCard } from 'lucide-react'
+import { PlusCircle, TrendingUp, Calendar, CreditCard, User, LogOut } from 'lucide-react'
 import { useStore } from '@/lib/store'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function Dashboard() {
   const { expenses, categories } = useStore()
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+  
+  useEffect(() => {
+    checkAuth()
+  }, [])
+  
+  const checkAuth = async () => {
+    try {
+      const res = await fetch('/api/auth/me')
+      if (res.ok) {
+        const userData = await res.json()
+        setUser(userData)
+      } else {
+        router.push('/auth/signin')
+      }
+    } catch {
+      router.push('/auth/signin')
+    } finally {
+      setLoading(false)
+    }
+  }
+  
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    router.push('/auth/signin')
+  }
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+  
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to Cheqa</h1>
+          <p className="text-gray-600 mb-8">Your personal expense tracker</p>
+          <div className="space-x-4">
+            <Link href="/auth/signin" className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+              Sign In
+            </Link>
+            <Link href="/auth/signup" className="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700">
+              Sign Up
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
   
   const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0)
   const thisMonth = new Date()
@@ -46,6 +103,17 @@ export default function Dashboard() {
               <Link href="/payment-methods" className="text-gray-700 hover:text-gray-900">
                 Payment Methods
               </Link>
+              <div className="flex items-center space-x-2 border-l pl-4">
+                <User className="h-5 w-5 text-gray-600" />
+                <span className="text-gray-700">{user.name || user.email}</span>
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-700 hover:text-gray-900 flex items-center space-x-1"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -54,7 +122,7 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">Welcome back!</h2>
+            <h2 className="text-3xl font-bold text-gray-900">Welcome back, {user.name?.split(' ')[0] || 'User'}!</h2>
             <p className="text-gray-600">Here's your expense overview</p>
           </div>
 
