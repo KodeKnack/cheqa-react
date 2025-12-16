@@ -9,7 +9,8 @@ import { useStore } from '@/lib/store'
 export default function EditExpense() {
   const router = useRouter()
   const params = useParams()
-  const { expenses, categories, paymentMethods, updateExpense } = useStore()
+  const { expenses, categories, paymentMethods, updateExpense, loadData } = useStore()
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
@@ -19,30 +20,55 @@ export default function EditExpense() {
   })
 
   const expense = expenses.find(e => e.id === params.id)
+  
+  useEffect(() => {
+    // Load data if not already loaded
+    if (categories.length === 0 || paymentMethods.length === 0) {
+      loadData()
+    }
+  }, [])
 
   useEffect(() => {
     if (expense) {
+      // Convert date to YYYY-MM-DD format for HTML date input
+      let dateValue = expense.expenseDate
+      if (typeof dateValue === 'string') {
+        dateValue = dateValue.includes('T') 
+          ? dateValue.split('T')[0] 
+          : dateValue
+      } else {
+        dateValue = new Date(dateValue).toISOString().split('T')[0]
+      }
+      
       setFormData({
-        description: expense.description,
-        amount: expense.amount.toString(),
-        categoryId: expense.categoryId,
-        paymentMethodId: expense.paymentMethodId,
-        expenseDate: expense.expenseDate
+        description: expense.description || '',
+        amount: expense.amount ? expense.amount.toString() : '',
+        categoryId: expense.categoryId || '',
+        paymentMethodId: expense.paymentMethodId || '',
+        expenseDate: dateValue
       })
     }
   }, [expense])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (expense) {
-      updateExpense(expense.id, {
-        description: formData.description,
-        amount: parseFloat(formData.amount),
-        categoryId: formData.categoryId,
-        paymentMethodId: formData.paymentMethodId,
-        expenseDate: formData.expenseDate
-      })
-      router.push('/expenses')
+    if (expense && !loading) {
+      setLoading(true)
+      try {
+        await updateExpense(expense.id, {
+          description: formData.description.trim(),
+          amount: parseFloat(formData.amount),
+          categoryId: formData.categoryId,
+          paymentMethodId: formData.paymentMethodId,
+          expenseDate: formData.expenseDate
+        })
+        router.push('/expenses')
+      } catch (error) {
+        console.error('Update failed:', error)
+        alert('Failed to update expense')
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
@@ -190,10 +216,11 @@ export default function EditExpense() {
                   <div className="flex space-x-3">
                     <button
                       type="submit"
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      disabled={loading}
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                     >
                       <Edit className="h-4 w-4 mr-2" />
-                      Update Expense
+                      {loading ? 'Updating...' : 'Update Expense'}
                     </button>
                     <Link
                       href="/expenses"

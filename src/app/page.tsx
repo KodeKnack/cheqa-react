@@ -16,6 +16,12 @@ export default function Dashboard() {
     checkAuth()
   }, [])
   
+  useEffect(() => {
+    if (user) {
+      useStore.getState().loadData()
+    }
+  }, [user])
+  
   const checkAuth = async () => {
     try {
       const res = await fetch('/api/auth/me')

@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { prisma } from '@/lib/prisma'
+import { getUser } from '@/lib/auth'
 
 export async function GET() {
   try {
-    const expenses = await db.expense.findMany({
+    const user = await getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const expenses = await prisma.expense.findMany({
+      where: { userId: user.id },
       include: {
         category: true,
         paymentMethod: true,
@@ -20,17 +27,22 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await request.json()
     const { description, amount, categoryId, paymentMethodId, expenseDate } = body
 
-    const expense = await db.expense.create({
+    const expense = await prisma.expense.create({
       data: {
         description,
         amount: parseFloat(amount),
         categoryId,
         paymentMethodId,
         expenseDate: new Date(expenseDate),
-        userId: 'temp-user-id' // TODO: Get from auth session
+        userId: user.id
       },
       include: {
         category: true,
