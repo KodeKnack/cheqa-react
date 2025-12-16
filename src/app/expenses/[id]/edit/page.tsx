@@ -165,7 +165,7 @@ export default function EditExpense() {
                         required
                         value={formData.categoryId}
                         onChange={handleChange}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-800"
                       >
                         <option value="">Select Category</option>
                         {categories.map((category) => (
@@ -186,7 +186,7 @@ export default function EditExpense() {
                         required
                         value={formData.paymentMethodId}
                         onChange={handleChange}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-800"
                       >
                         <option value="">Select Payment Method</option>
                         {paymentMethods.map((method) => (

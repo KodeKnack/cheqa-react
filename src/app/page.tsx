@@ -8,11 +8,18 @@ import { useRouter } from 'next/navigation'
 import SpendingChart from '@/components/SpendingChart'
 import MonthlyTrend from '@/components/MonthlyTrend'
 import TopCategories from '@/components/TopCategories'
+import DateRangePicker from '@/components/DateRangePicker';
 
 export default function Dashboard() {
   const { expenses, categories } = useStore()
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [filterRange, setFilterRange] = useState('all');
+  const [filteredExpenses, setFilteredExpenses] = useState(expenses);
+
+  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  const [filteredTotal, setFilteredTotal] = useState(totalExpenses);
+
   const router = useRouter()
   
   useEffect(() => {
@@ -61,10 +68,10 @@ export default function Dashboard() {
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to Cheqa</h1>
           <p className="text-gray-600 mb-8">Your personal expense tracker</p>
           <div className="space-x-4">
-            <Link href="/auth/signin" className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+            <Link href="/auth/signin" className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 text-gray-800">
               Sign In
             </Link>
-            <Link href="/auth/signup" className="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700">
+            <Link href="/auth/signup" className="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700 text-gray-800">
               Sign Up
             </Link>
           </div>
@@ -73,7 +80,6 @@ export default function Dashboard() {
     )
   }
   
-  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0)
   const thisMonth = new Date()
   const monthlyExpenses = expenses
     .filter(expense => {
@@ -93,6 +99,74 @@ export default function Dashboard() {
       currency: 'ZAR'
     }).format(amount).replace('ZAR', 'R')
   }
+
+  const handleFilterChange = (range: 'all' | 'day' | 'week' | 'month' | 'year') => {
+    const now = new Date();
+    let filtered = expenses;
+  
+    if (range === 'day') {
+      filtered = expenses.filter(expense => {
+        const expenseDate = new Date(expense.expenseDate);
+        return expenseDate.toDateString() === now.toDateString();
+      });
+    } else if (range === 'week') {
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      filtered = expenses.filter(expense => {
+        const expenseDate = new Date(expense.expenseDate);
+        return expenseDate >= weekAgo && expenseDate <= now;
+      });
+    } else if (range === 'month') {
+      filtered = expenses.filter(expense => {
+        const expenseDate = new Date(expense.expenseDate);
+        return (
+          expenseDate.getMonth() === now.getMonth() &&
+          expenseDate.getFullYear() === now.getFullYear()
+        );
+      });
+    } else if (range === 'year') {
+      filtered = expenses.filter(expense => {
+        const expenseDate = new Date(expense.expenseDate);
+        return expenseDate.getFullYear() === now.getFullYear();
+      });
+    }
+  
+    setFilteredExpenses(filtered);
+    setFilteredTotal(filtered.reduce((sum, expense) => sum + expense.amount, 0));
+    setFilterRange(range);
+  };
+
+  const handleDateRangeChange = (startDate: string, endDate: string) => {
+    const filtered = expenses.filter(expense => {
+      const expenseDate = new Date(expense.expenseDate);
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+  
+      // Ensure all dates are valid before comparison
+      return (
+        !isNaN(expenseDate.getTime()) &&
+        !isNaN(start.getTime()) &&
+        !isNaN(end.getTime()) &&
+        expenseDate >= start && expenseDate <= end
+      );
+    });
+  
+    setFilteredExpenses(filtered);
+    setFilteredTotal(filtered.reduce((sum, expense) => sum + expense.amount, 0));
+  };
+
+  // Update the 'This Month' calculation to use filteredExpenses
+  const filteredMonthlyExpenses = filteredExpenses
+    .filter(expense => {
+      const expenseDate = new Date(expense.expenseDate);
+      return (
+        expenseDate.getMonth() === thisMonth.getMonth() &&
+        expenseDate.getFullYear() === thisMonth.getFullYear()
+      );
+    })
+    .reduce((sum, expense) => sum + expense.amount, 0);
+
+  // Update the 'Categories' count to reflect filteredExpenses
+  const filteredCategories = new Set(filteredExpenses.map(expense => expense.categoryId)).size;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -137,6 +211,11 @@ export default function Dashboard() {
             <p className="text-gray-600">Here's your expense overview</p>
           </div>
 
+          <div className="mb-6">
+            <label htmlFor="date-range" className="block text-sm font-medium text-gray-700">Filter by Date Range:</label>
+            <DateRangePicker onDateRangeChange={handleDateRangeChange} />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-white overflow-hidden shadow rounded-lg">
               <div className="p-5">
@@ -170,7 +249,7 @@ export default function Dashboard() {
                         This Month
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        {formatCurrency(monthlyExpenses)}
+                        {formatCurrency(filteredMonthlyExpenses)}
                       </dd>
                     </dl>
                   </div>
@@ -190,7 +269,7 @@ export default function Dashboard() {
                         Categories
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        {categories.length}
+                        {filteredCategories}
                       </dd>
                     </dl>
                   </div>
@@ -211,11 +290,31 @@ export default function Dashboard() {
             </div>
           </div>
 
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <TrendingUp className="h-6 w-6 text-gray-400" />
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-gray-500 truncate">
+                      Filtered Total
+                    </dt>
+                    <dd className="text-lg font-medium text-gray-900">
+                      {formatCurrency(filteredTotal)}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Analytics Section */}
           {expenses.length > 0 && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <SpendingChart expenses={expenses} categories={categories} />
-              <MonthlyTrend expenses={expenses} />
+              <SpendingChart expenses={filteredExpenses} categories={categories} />
+              <MonthlyTrend expenses={filteredExpenses} />
             </div>
           )}
 

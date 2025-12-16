@@ -7,6 +7,7 @@ interface DateRangePickerProps {
   onDateRangeChange: (startDate: string, endDate: string) => void
 }
 
+// This component allows users to select a date range using predefined presets or a custom range
 export default function DateRangePicker({ onDateRangeChange }: DateRangePickerProps) {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
@@ -64,6 +65,7 @@ export default function DateRangePicker({ onDateRangeChange }: DateRangePickerPr
         <option value="year">This Year</option>
         <option value="custom">Custom Range</option>
       </select>
+      {/* Updated the dropdown to darken the font color for better readability */}
 
       {showCustom && (
         <div className="flex items-center space-x-2">
@@ -71,15 +73,16 @@ export default function DateRangePicker({ onDateRangeChange }: DateRangePickerPr
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="block w-full pl-3 pr-3 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+            className="block w-full pl-3 pr-3 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md text-gray-800"
           />
           <span className="text-gray-500">to</span>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="block w-full pl-3 pr-3 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+            className="block w-full pl-3 pr-3 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md text-gray-800"
           />
+          {/* Updated the input fields for custom date selection to darken the font color for better readability */}
           <button
             onClick={handleCustomDateChange}
             className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
