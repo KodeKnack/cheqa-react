@@ -34,3 +34,22 @@ select:focus {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
+
+/* Mobile responsive improvements */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Improve touch targets on mobile */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better form inputs on mobile */
+  input, select, textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}

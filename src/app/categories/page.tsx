@@ -22,9 +22,9 @@ export default function Categories() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-gray-900">Cheqa</Link>
+              <Link href="/" className="text-xl sm:text-2xl font-bold text-gray-900">Cheqa</Link>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="hidden sm:flex items-center space-x-4">
               <Link href="/expenses" className="text-gray-700 hover:text-gray-900">
                 Expenses
               </Link>
@@ -33,6 +33,11 @@ export default function Categories() {
               </Link>
               <Link href="/payment-methods" className="text-gray-700 hover:text-gray-900">
                 Payment Methods
+              </Link>
+            </div>
+            <div className="sm:hidden flex items-center">
+              <Link href="/" className="text-blue-600 hover:text-blue-800">
+                <ArrowLeft className="h-5 w-5" />
               </Link>
             </div>
           </div>
@@ -47,11 +52,11 @@ export default function Categories() {
               Back to Dashboard
             </Link>
           </div>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">Categories</h2>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Categories</h2>
             <Link
               href="/categories/create"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
             >
               <PlusCircle className="h-4 w-4 mr-2" />
               Add Category
@@ -62,7 +67,7 @@ export default function Categories() {
             <ul className="divide-y divide-gray-200">
               {categories.map((category) => (
                 <li key={category.id}>
-                  <div className="px-4 py-4 flex items-center justify-between">
+                  <div className="px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
                         <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -78,13 +83,13 @@ export default function Categories() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <button className="text-blue-600 hover:text-blue-800 text-sm">
+                    <div className="flex items-center space-x-2 ml-14 sm:ml-0">
+                      <Link href={`/categories/${category.id}/edit`} className="text-blue-600 hover:text-blue-800 text-sm px-3 py-1 rounded border border-blue-200">
                         Edit
-                      </button>
+                      </Link>
                       <button 
                         onClick={() => deleteCategory(category.id)}
-                        className="text-red-600 hover:text-red-800 text-sm"
+                        className="text-red-600 hover:text-red-800 text-sm px-3 py-1 rounded border border-red-200"
                       >
                         Delete
                       </button>

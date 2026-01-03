@@ -166,13 +166,20 @@ export const useStore = create<Store>((set, get) => ({
 
   deleteCategory: async (id) => {
     try {
+      console.log('Deleting category:', id)
       const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' })
       
       if (res.ok) {
+        console.log('Category deleted successfully')
         set((state) => ({ categories: state.categories.filter(c => c.id !== id) }))
+      } else {
+        const error = await res.json()
+        console.error('Failed to delete category:', error)
+        alert(error.error || 'Failed to delete category')
       }
     } catch (error) {
       console.error('Failed to delete category:', error)
+      alert('Failed to delete category')
     }
   },
 
@@ -214,13 +221,20 @@ export const useStore = create<Store>((set, get) => ({
 
   deletePaymentMethod: async (id) => {
     try {
+      console.log('Deleting payment method:', id)
       const res = await fetch(`/api/payment-methods/${id}`, { method: 'DELETE' })
       
       if (res.ok) {
+        console.log('Payment method deleted successfully')
         set((state) => ({ paymentMethods: state.paymentMethods.filter(m => m.id !== id) }))
+      } else {
+        const error = await res.json()
+        console.error('Failed to delete payment method:', error)
+        alert(error.error || 'Failed to delete payment method')
       }
     } catch (error) {
       console.error('Failed to delete payment method:', error)
+      alert('Failed to delete payment method')
     }
   }
 }))
