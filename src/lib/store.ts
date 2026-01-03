@@ -25,24 +25,6 @@ interface Store {
   categories: Category[]
   paymentMethods: PaymentMethod[]
   
-  addExpense: (expense: Omit<Expense, 'id' | 'createdAt'>) => void
-  updateExpense: (id: string, expense: Partial<Expense>) => void
-  deleteExpense: (id: string) => void
-  
-  addCategory: (category: Omit<Category, 'id'>) => void
-  updateCategory: (id: string, category: Partial<Category>) => void
-  deleteCategory: (id: string) => void
-  
-  addPaymentMethod: (method: Omit<PaymentMethod, 'id'>) => void
-  updatePaymentMethod: (id: string, method: Partial<PaymentMethod>) => void
-  deletePaymentMethod: (id: string) => void
-}
-
-interface Store {
-  expenses: Expense[]
-  categories: Category[]
-  paymentMethods: PaymentMethod[]
-  
   loadData: () => Promise<void>
   addExpense: (expense: Omit<Expense, 'id' | 'createdAt'>) => Promise<void>
   updateExpense: (id: string, expense: Partial<Expense>) => Promise<void>
@@ -64,11 +46,18 @@ export const useStore = create<Store>((set, get) => ({
 
   loadData: async () => {
     try {
+      console.log('Loading data...')
       const [expensesRes, categoriesRes, paymentMethodsRes] = await Promise.all([
         fetch('/api/expenses'),
         fetch('/api/categories'),
         fetch('/api/payment-methods')
       ])
+      
+      console.log('API responses:', {
+        expenses: expensesRes.status,
+        categories: categoriesRes.status,
+        paymentMethods: paymentMethodsRes.status
+      })
       
       if (expensesRes.ok && categoriesRes.ok && paymentMethodsRes.ok) {
         const [expenses, categories, paymentMethods] = await Promise.all([
@@ -77,7 +66,14 @@ export const useStore = create<Store>((set, get) => ({
           paymentMethodsRes.json()
         ])
         
+        console.log('Loaded data:', { expenses: expenses.length, categories: categories.length, paymentMethods: paymentMethods.length })
         set({ expenses, categories, paymentMethods })
+      } else {
+        console.error('Failed to load some data:', {
+          expenses: !expensesRes.ok ? await expensesRes.text() : 'OK',
+          categories: !categoriesRes.ok ? await categoriesRes.text() : 'OK',
+          paymentMethods: !paymentMethodsRes.ok ? await paymentMethodsRes.text() : 'OK'
+        })
       }
     } catch (error) {
       console.error('Failed to load data:', error)
@@ -170,13 +166,20 @@ export const useStore = create<Store>((set, get) => ({
 
   deleteCategory: async (id) => {
     try {
+      console.log('Deleting category:', id)
       const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' })
       
       if (res.ok) {
+        console.log('Category deleted successfully')
         set((state) => ({ categories: state.categories.filter(c => c.id !== id) }))
+      } else {
+        const error = await res.json()
+        console.error('Failed to delete category:', error)
+        alert(error.error || 'Failed to delete category')
       }
     } catch (error) {
       console.error('Failed to delete category:', error)
+      alert('Failed to delete category')
     }
   },
 
@@ -218,13 +221,20 @@ export const useStore = create<Store>((set, get) => ({
 
   deletePaymentMethod: async (id) => {
     try {
+      console.log('Deleting payment method:', id)
       const res = await fetch(`/api/payment-methods/${id}`, { method: 'DELETE' })
       
       if (res.ok) {
+        console.log('Payment method deleted successfully')
         set((state) => ({ paymentMethods: state.paymentMethods.filter(m => m.id !== id) }))
+      } else {
+        const error = await res.json()
+        console.error('Failed to delete payment method:', error)
+        alert(error.error || 'Failed to delete payment method')
       }
     } catch (error) {
       console.error('Failed to delete payment method:', error)
+      alert('Failed to delete payment method')
     }
   }
 }))

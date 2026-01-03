@@ -174,9 +174,9 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Cheqa</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Cheqa</h1>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-4">
               <Link href="/expenses" className="text-gray-700 hover:text-gray-900">
                 Expenses
               </Link>
@@ -186,17 +186,27 @@ export default function Dashboard() {
               <Link href="/payment-methods" className="text-gray-700 hover:text-gray-900">
                 Payment Methods
               </Link>
-              <div className="flex items-center space-x-2">
-                <User className="h-5 w-5 text-gray-600" />
-                <span className="text-gray-700">{user.name || user.email}</span>
+              <div className="flex items-center space-x-2 border-l pl-4">
+                <Link href="/profile" className="flex items-center space-x-1 text-gray-700 hover:text-gray-900">
+                  <User className="h-5 w-5 text-gray-600" />
+                  <span className="hidden lg:inline text-gray-700">{user.name || user.email}</span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="text-gray-700 hover:text-gray-900 flex items-center space-x-1"
                 >
                   <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
+                  <span className="hidden sm:inline">Logout</span>
                 </button>
               </div>
+            </div>
+            <div className="md:hidden flex items-center space-x-2">
+              <Link href="/profile" className="text-gray-700 hover:text-gray-900">
+                <User className="h-5 w-5" />
+              </Link>
+              <button onClick={handleLogout} className="text-gray-700 hover:text-gray-900">
+                <LogOut className="h-4 w-4" />
+              </button>
             </div>
           </div>
         </div>
@@ -205,28 +215,28 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">Welcome back, {user.name?.split(' ')[0] || 'User'}!</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Welcome back, {user.name?.split(' ')[0] || 'User'}!</h2>
             <p className="text-gray-600">Here's your expense overview</p>
           </div>
 
           <div className="mb-6">
-            <label htmlFor="date-range" className="block text-sm font-medium text-gray-700">Filter by Date Range:</label>
+            <label htmlFor="date-range" className="block text-sm font-medium text-gray-700 mb-2">Filter by Date Range:</label>
             <DateRangePicker onDateRangeChange={handleDateRangeChange} />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
             <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
+              <div className="p-4 sm:p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <TrendingUp className="h-6 w-6 text-gray-400" />
+                    <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
                   </div>
-                  <div className="ml-5 w-0 flex-1">
+                  <div className="ml-3 sm:ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
+                      <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
                         Total Expenses
                       </dt>
-                      <dd className="text-lg font-medium text-gray-900">
+                      <dd className="text-sm sm:text-lg font-medium text-gray-900">
                         {formatCurrency(totalExpenses)}
                       </dd>
                     </dl>
@@ -236,17 +246,17 @@ export default function Dashboard() {
             </div>
 
             <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
+              <div className="p-4 sm:p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <Calendar className="h-6 w-6 text-gray-400" />
+                    <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
                   </div>
-                  <div className="ml-5 w-0 flex-1">
+                  <div className="ml-3 sm:ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
+                      <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
                         This Month
                       </dt>
-                      <dd className="text-lg font-medium text-gray-900">
+                      <dd className="text-sm sm:text-lg font-medium text-gray-900">
                         {formatCurrency(filteredMonthlyExpenses)}
                       </dd>
                     </dl>
@@ -256,17 +266,17 @@ export default function Dashboard() {
             </div>
 
             <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
+              <div className="p-4 sm:p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <CreditCard className="h-6 w-6 text-gray-400" />
+                    <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
                   </div>
-                  <div className="ml-5 w-0 flex-1">
+                  <div className="ml-3 sm:ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
+                      <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
                         Categories
                       </dt>
-                      <dd className="text-lg font-medium text-gray-900">
+                      <dd className="text-sm sm:text-lg font-medium text-gray-900">
                         {filteredCategories}
                       </dd>
                     </dl>
@@ -276,13 +286,13 @@ export default function Dashboard() {
             </div>
 
             <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
+              <div className="p-4 sm:p-5">
                 <Link
                   href="/expenses/create"
-                  className="flex items-center justify-center w-full h-full text-blue-600 hover:text-blue-800"
+                  className="flex flex-col sm:flex-row items-center justify-center w-full h-full text-blue-600 hover:text-blue-800 space-y-1 sm:space-y-0 sm:space-x-2"
                 >
-                  <PlusCircle className="h-8 w-8" />
-                  <span className="ml-2 font-medium">Add Expense</span>
+                  <PlusCircle className="h-6 w-6 sm:h-8 sm:w-8" />
+                  <span className="text-sm sm:text-base font-medium">Add Expense</span>
                 </Link>
               </div>
             </div>

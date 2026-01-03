@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { PlusCircle, Search, Calendar, Edit, Trash2, ArrowLeft } from 'lucide-react'
 import { useStore } from '@/lib/store'
@@ -8,9 +8,13 @@ import DateRangePicker from '@/components/DateRangePicker'
 import ExportButton from '@/components/ExportButton'
 
 export default function Expenses() {
-  const { expenses, categories, paymentMethods, deleteExpense } = useStore()
+  const { expenses, categories, paymentMethods, deleteExpense, loadData } = useStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [dateRange, setDateRange] = useState({ start: '', end: '' })
+
+  useEffect(() => {
+    loadData()
+  }, [])
 
   const getCategoryName = (id: string) => categories.find(c => c.id === id)?.name || 'Unknown'
   const getPaymentMethodName = (id: string) => paymentMethods.find(p => p.id === id)?.name || 'Unknown'
@@ -46,9 +50,9 @@ export default function Expenses() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-gray-900">Cheqa</Link>
+              <Link href="/" className="text-xl sm:text-2xl font-bold text-gray-900">Cheqa</Link>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="hidden sm:flex items-center space-x-4">
               <Link href="/expenses" className="text-blue-600 font-medium">
                 Expenses
               </Link>
@@ -57,6 +61,11 @@ export default function Expenses() {
               </Link>
               <Link href="/payment-methods" className="text-gray-700 hover:text-gray-900">
                 Payment Methods
+              </Link>
+            </div>
+            <div className="sm:hidden flex items-center">
+              <Link href="/" className="text-blue-600 hover:text-blue-800">
+                <ArrowLeft className="h-5 w-5" />
               </Link>
             </div>
           </div>
@@ -71,13 +80,13 @@ export default function Expenses() {
               Back to Dashboard
             </Link>
           </div>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">Expenses</h2>
-            <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Expenses</h2>
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
               <ExportButton />
               <Link
                 href="/expenses/create"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
               >
                 <PlusCircle className="h-4 w-4 mr-2" />
                 Add Expense
@@ -131,7 +140,7 @@ export default function Expenses() {
               ) : (
                 expenses.map((expense) => (
                   <li key={expense.id}>
-                    <div className="px-4 py-4 flex items-center justify-between">
+                    <div className="px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
                           <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -147,17 +156,17 @@ export default function Expenses() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4">
+                      <div className="flex items-center justify-between sm:justify-end space-x-4 ml-14 sm:ml-0">
                         <div className="text-sm font-medium text-gray-900">
                           {formatCurrency(expense.amount)}
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Link href={`/expenses/${expense.id}/edit`} className="text-blue-600 hover:text-blue-800">
+                          <Link href={`/expenses/${expense.id}/edit`} className="text-blue-600 hover:text-blue-800 p-1">
                             <Edit className="h-4 w-4" />
                           </Link>
                           <button 
                             onClick={() => deleteExpense(expense.id)}
-                            className="text-red-600 hover:text-red-800"
+                            className="text-red-600 hover:text-red-800 p-1"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
