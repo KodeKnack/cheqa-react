@@ -25,24 +25,6 @@ interface Store {
   categories: Category[]
   paymentMethods: PaymentMethod[]
   
-  addExpense: (expense: Omit<Expense, 'id' | 'createdAt'>) => void
-  updateExpense: (id: string, expense: Partial<Expense>) => void
-  deleteExpense: (id: string) => void
-  
-  addCategory: (category: Omit<Category, 'id'>) => void
-  updateCategory: (id: string, category: Partial<Category>) => void
-  deleteCategory: (id: string) => void
-  
-  addPaymentMethod: (method: Omit<PaymentMethod, 'id'>) => void
-  updatePaymentMethod: (id: string, method: Partial<PaymentMethod>) => void
-  deletePaymentMethod: (id: string) => void
-}
-
-interface Store {
-  expenses: Expense[]
-  categories: Category[]
-  paymentMethods: PaymentMethod[]
-  
   loadData: () => Promise<void>
   addExpense: (expense: Omit<Expense, 'id' | 'createdAt'>) => Promise<void>
   updateExpense: (id: string, expense: Partial<Expense>) => Promise<void>
@@ -64,11 +46,18 @@ export const useStore = create<Store>((set, get) => ({
 
   loadData: async () => {
     try {
+      console.log('Loading data...')
       const [expensesRes, categoriesRes, paymentMethodsRes] = await Promise.all([
         fetch('/api/expenses'),
         fetch('/api/categories'),
         fetch('/api/payment-methods')
       ])
+      
+      console.log('API responses:', {
+        expenses: expensesRes.status,
+        categories: categoriesRes.status,
+        paymentMethods: paymentMethodsRes.status
+      })
       
       if (expensesRes.ok && categoriesRes.ok && paymentMethodsRes.ok) {
         const [expenses, categories, paymentMethods] = await Promise.all([
@@ -77,7 +66,14 @@ export const useStore = create<Store>((set, get) => ({
           paymentMethodsRes.json()
         ])
         
+        console.log('Loaded data:', { expenses: expenses.length, categories: categories.length, paymentMethods: paymentMethods.length })
         set({ expenses, categories, paymentMethods })
+      } else {
+        console.error('Failed to load some data:', {
+          expenses: !expensesRes.ok ? await expensesRes.text() : 'OK',
+          categories: !categoriesRes.ok ? await categoriesRes.text() : 'OK',
+          paymentMethods: !paymentMethodsRes.ok ? await paymentMethodsRes.text() : 'OK'
+        })
       }
     } catch (error) {
       console.error('Failed to load data:', error)

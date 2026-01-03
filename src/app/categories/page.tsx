@@ -1,11 +1,16 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { PlusCircle, Tag, ArrowLeft } from 'lucide-react'
 import { useStore } from '@/lib/store'
 
 export default function Categories() {
-  const { categories, expenses, deleteCategory } = useStore()
+  const { categories, expenses, deleteCategory, loadData } = useStore()
+  
+  useEffect(() => {
+    loadData()
+  }, [])
   
   const getCategoryExpenseCount = (categoryId: string) => {
     return expenses.filter(expense => expense.categoryId === categoryId).length

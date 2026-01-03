@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { PlusCircle, Search, Calendar, Edit, Trash2, ArrowLeft } from 'lucide-react'
 import { useStore } from '@/lib/store'
@@ -8,9 +8,13 @@ import DateRangePicker from '@/components/DateRangePicker'
 import ExportButton from '@/components/ExportButton'
 
 export default function Expenses() {
-  const { expenses, categories, paymentMethods, deleteExpense } = useStore()
+  const { expenses, categories, paymentMethods, deleteExpense, loadData } = useStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [dateRange, setDateRange] = useState({ start: '', end: '' })
+
+  useEffect(() => {
+    loadData()
+  }, [])
 
   const getCategoryName = (id: string) => categories.find(c => c.id === id)?.name || 'Unknown'
   const getPaymentMethodName = (id: string) => paymentMethods.find(p => p.id === id)?.name || 'Unknown'

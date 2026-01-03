@@ -1,11 +1,16 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { PlusCircle, CreditCard, ArrowLeft } from 'lucide-react'
 import { useStore } from '@/lib/store'
 
 export default function PaymentMethods() {
-  const { paymentMethods, expenses, deletePaymentMethod } = useStore()
+  const { paymentMethods, expenses, deletePaymentMethod, loadData } = useStore()
+  
+  useEffect(() => {
+    loadData()
+  }, [])
   
   const getPaymentMethodExpenseCount = (methodId: string) => {
     return expenses.filter(expense => expense.paymentMethodId === methodId).length

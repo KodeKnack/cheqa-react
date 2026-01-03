@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { PlusCircle, X } from 'lucide-react'
@@ -8,7 +8,8 @@ import { useStore } from '@/lib/store'
 
 export default function CreateExpense() {
   const router = useRouter()
-  const { categories, paymentMethods, addExpense } = useStore()
+  const { categories, paymentMethods, addExpense, loadData } = useStore()
+  const [loading, setLoading] = useState(true)
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
@@ -16,6 +17,21 @@ export default function CreateExpense() {
     paymentMethodId: '',
     expenseDate: new Date().toISOString().split('T')[0]
   })
+
+  useEffect(() => {
+    const initializeData = async () => {
+      console.log('CreateExpense: Loading data...')
+      await loadData()
+      console.log('CreateExpense: Data loaded', { categories: categories.length, paymentMethods: paymentMethods.length })
+      setLoading(false)
+    }
+    initializeData()
+  }, [])
+
+  useEffect(() => {
+    console.log('CreateExpense: Categories updated', categories)
+    console.log('CreateExpense: Payment methods updated', paymentMethods)
+  }, [categories, paymentMethods])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -118,15 +134,18 @@ export default function CreateExpense() {
                         required
                         value={formData.categoryId}
                         onChange={handleChange}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-800"
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-900 bg-white"
+                        disabled={loading}
                       >
-                        <option value="" disabled hidden>Select Category</option>
+                        <option value="">Select Category</option>
                         {categories.map((category) => (
                           <option key={category.id} value={category.id}>
                             {category.name}
                           </option>
                         ))}
                       </select>
+                      {loading && <p className="text-xs text-gray-500 mt-1">Loading categories...</p>}
+                      {!loading && categories.length === 0 && <p className="text-xs text-red-500 mt-1">No categories found. Please add some categories first.</p>}
                     </div>
 
                     <div>
@@ -139,15 +158,18 @@ export default function CreateExpense() {
                         required
                         value={formData.paymentMethodId}
                         onChange={handleChange}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-800"
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-900 bg-white"
+                        disabled={loading}
                       >
-                        <option value="" disabled hidden>Select Payment Method</option>
+                        <option value="">Select Payment Method</option>
                         {paymentMethods.map((method) => (
                           <option key={method.id} value={method.id}>
                             {method.name}
                           </option>
                         ))}
                       </select>
+                      {loading && <p className="text-xs text-gray-500 mt-1">Loading payment methods...</p>}
+                      {!loading && paymentMethods.length === 0 && <p className="text-xs text-red-500 mt-1">No payment methods found. Please add some payment methods first.</p>}
                     </div>
                   </div>
 
