@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 import { PlusCircle, CreditCard, ArrowLeft } from 'lucide-react'
 import { useStore } from '@/lib/store'
+import ThemeToggle from '@/components/ThemeToggle'
 
 export default function PaymentMethods() {
   const { paymentMethods, expenses, deletePaymentMethod, loadData } = useStore()
@@ -17,28 +18,30 @@ export default function PaymentMethods() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <nav className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link href="/" className="text-xl sm:text-2xl font-bold text-gray-900">Cheqa</Link>
+              <Link href="/" className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Cheqa</Link>
             </div>
             <div className="hidden sm:flex items-center space-x-4">
-              <Link href="/expenses" className="text-gray-700 hover:text-gray-900">
+              <Link href="/expenses" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100">
                 Expenses
               </Link>
-              <Link href="/categories" className="text-gray-700 hover:text-gray-900">
+              <Link href="/categories" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100">
                 Categories
               </Link>
-              <Link href="/payment-methods" className="text-blue-600 font-medium">
+              <Link href="/payment-methods" className="text-blue-600 dark:text-blue-400 font-medium">
                 Payment Methods
               </Link>
+              <ThemeToggle />
             </div>
             <div className="sm:hidden flex items-center">
-              <Link href="/" className="text-blue-600 hover:text-blue-800">
+              <Link href="/" className="text-blue-600 dark:text-blue-400 hover:opacity-90">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
+              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -47,49 +50,52 @@ export default function PaymentMethods() {
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="mb-6">
-            <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+            <Link href="/" className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:opacity-90">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
             </Link>
           </div>
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Payment Methods</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Payment Methods</h2>
             <Link
               href="/payment-methods/create"
-              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
+              className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:opacity-90 w-full sm:w-auto"
             >
               <PlusCircle className="h-4 w-4 mr-2" />
               Add Payment Method
             </Link>
           </div>
 
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul className="divide-y divide-gray-200">
+          <div className="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-700 rounded-xl">
+            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
               {paymentMethods.map((method) => (
                 <li key={method.id}>
-                  <div className="px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+                  <div className="px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                          <CreditCard className="h-5 w-5 text-green-600" />
+                        <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                          <CreditCard className="h-5 w-5 text-green-600 dark:text-green-400" />
                         </div>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                           {method.name}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
                           {getPaymentMethodExpenseCount(method.id)} expenses
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 ml-14 sm:ml-0">
-                      <Link href={`/payment-methods/${method.id}/edit`} className="text-blue-600 hover:text-blue-800 text-sm px-3 py-1 rounded border border-blue-200">
+                      <Link
+                        href={`/payment-methods/${method.id}/edit`}
+                        className="text-blue-600 dark:text-blue-400 hover:opacity-90 text-sm px-3 py-1 rounded border border-gray-200 dark:border-gray-700"
+                      >
                         Edit
                       </Link>
                       <button 
                         onClick={() => deletePaymentMethod(method.id)}
-                        className="text-red-600 hover:text-red-800 text-sm px-3 py-1 rounded border border-red-200"
+                        className="text-red-600 dark:text-red-400 hover:opacity-90 text-sm px-3 py-1 rounded border border-gray-200 dark:border-gray-700"
                       >
                         Delete
                       </button>

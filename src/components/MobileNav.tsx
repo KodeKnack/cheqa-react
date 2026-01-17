@@ -15,7 +15,7 @@ export default function MobileNav() {
   ]
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 sm:hidden z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 sm:hidden z-50">
       <div className="grid grid-cols-4 py-2">
         {navItems.map(({ href, icon: Icon, label }) => {
           const isActive = pathname === href
@@ -25,11 +25,11 @@ export default function MobileNav() {
               href={href}
               className={`flex flex-col items-center justify-center py-2 px-1 text-xs ${
                 isActive 
-                  ? 'text-blue-600' 
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'text-blue-600 dark:text-blue-400' 
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100'
               }`}
             >
-              <Icon className={`h-5 w-5 mb-1 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} />
+              <Icon className={`h-5 w-5 mb-1 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'}`} />
               <span className="truncate">{label}</span>
             </Link>
           )

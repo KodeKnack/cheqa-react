@@ -9,6 +9,9 @@ import SpendingChart from '@/components/SpendingChart';
 import MonthlyTrend from '@/components/MonthlyTrend';
 import TopCategories from '@/components/TopCategories';
 import DateRangePicker from '@/components/DateRangePicker';
+import HeroSection from '@/components/HeroSection';
+import ThemeToggle from '@/components/ThemeToggle';
+import RevealOnScroll from '@/components/RevealOnScroll';
 
 export default function Dashboard() {
   const { expenses, categories } = useStore();
@@ -16,6 +19,10 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [filterRange, setFilterRange] = useState('all');
   const [filteredExpenses, setFilteredExpenses] = useState(expenses);
+  const [dateRange, setDateRange] = useState<{ startDate: string | null; endDate: string | null }>({
+    startDate: null,
+    endDate: null
+  });
 
   const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
   const [filteredTotal, setFilteredTotal] = useState(totalExpenses);
@@ -32,6 +39,13 @@ export default function Dashboard() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (!dateRange.startDate || !dateRange.endDate) {
+      setFilteredExpenses(expenses);
+      setFilteredTotal(expenses.reduce((sum, expense) => sum + expense.amount, 0));
+    }
+  }, [expenses, dateRange.startDate, dateRange.endDate]);
+
   const checkAuth = async () => {
     try {
       const res = await fetch('/api/auth/me');
@@ -39,10 +53,10 @@ export default function Dashboard() {
         const userData = await res.json();
         setUser(userData);
       } else {
-        router.push('/auth/signin');
+        setUser(null);
       }
     } catch {
-      router.push('/auth/signin');
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -62,22 +76,7 @@ export default function Dashboard() {
   }
 
   if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to Cheqa</h1>
-          <p className="text-gray-600 mb-8">Your personal expense tracker</p>
-          <div className="space-x-4">
-            <Link href="/auth/signin" className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 text-gray-800">
-              Sign In
-            </Link>
-            <Link href="/auth/signup" className="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700 text-gray-800">
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+    return <HeroSection />;
   }
 
   const thisMonth = new Date()
@@ -136,6 +135,14 @@ export default function Dashboard() {
   };
 
   const handleDateRangeChange = (startDate: string, endDate: string) => {
+    if (!startDate || !endDate) {
+      setDateRange({ startDate: null, endDate: null });
+      setFilteredExpenses(expenses);
+      setFilteredTotal(expenses.reduce((sum, expense) => sum + expense.amount, 0));
+      return;
+    }
+
+    setDateRange({ startDate, endDate });
     const filtered = expenses.filter(expense => {
       const expenseDate = new Date(expense.expenseDate);
       const start = new Date(startDate);
@@ -169,44 +176,46 @@ export default function Dashboard() {
   const filteredCategories = new Set(filteredExpenses.map(expense => expense.categoryId)).size;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <nav className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Cheqa</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Cheqa</h1>
             </div>
             <div className="hidden md:flex items-center space-x-4">
-              <Link href="/expenses" className="text-gray-700 hover:text-gray-900">
+              <Link href="/expenses" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100">
                 Expenses
               </Link>
-              <Link href="/categories" className="text-gray-700 hover:text-gray-900">
+              <Link href="/categories" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100">
                 Categories
               </Link>
-              <Link href="/payment-methods" className="text-gray-700 hover:text-gray-900">
+              <Link href="/payment-methods" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100">
                 Payment Methods
               </Link>
-              <div className="flex items-center space-x-2 border-l pl-4">
-                <Link href="/profile" className="flex items-center space-x-1 text-gray-700 hover:text-gray-900">
-                  <User className="h-5 w-5 text-gray-600" />
-                  <span className="hidden lg:inline text-gray-700">{user.name || user.email}</span>
+              <div className="flex items-center space-x-2 border-l border-gray-200 dark:border-gray-700 pl-4">
+                <Link href="/profile" className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100">
+                  <User className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  <span className="hidden lg:inline text-gray-600 dark:text-gray-400">{user.name || user.email}</span>
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="text-gray-700 hover:text-gray-900 flex items-center space-x-1"
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 flex items-center space-x-1"
                 >
                   <LogOut className="h-4 w-4" />
                   <span className="hidden sm:inline">Logout</span>
                 </button>
+                <ThemeToggle />
               </div>
             </div>
             <div className="md:hidden flex items-center space-x-2">
-              <Link href="/profile" className="text-gray-700 hover:text-gray-900">
+              <Link href="/profile" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100">
                 <User className="h-5 w-5" />
               </Link>
-              <button onClick={handleLogout} className="text-gray-700 hover:text-gray-900">
+              <button onClick={handleLogout} className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100">
                 <LogOut className="h-4 w-4" />
               </button>
+              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -215,48 +224,53 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Welcome back, {user.name?.split(' ')[0] || 'User'}!</h2>
-            <p className="text-gray-600">Here's your expense overview</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Welcome back, {user.name?.split(' ')[0] || 'User'}!
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">Here's your expense overview</p>
           </div>
 
           <div className="mb-6">
-            <label htmlFor="date-range" className="block text-sm font-medium text-gray-700 mb-2">Filter by Date Range:</label>
+            <label htmlFor="date-range" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+              Filter by Date Range:
+            </label>
             <DateRangePicker onDateRangeChange={handleDateRangeChange} />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-4 sm:p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
-                  </div>
-                  <div className="ml-3 sm:ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
-                        Total Expenses
-                      </dt>
-                      <dd className="text-sm sm:text-lg font-medium text-gray-900">
-                        {formatCurrency(totalExpenses)}
-                      </dd>
-                    </dl>
+          <RevealOnScroll>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+              <div className="bg-white dark:bg-gray-900 overflow-hidden shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+                <div className="p-4 sm:p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600 dark:text-gray-400" />
+                    </div>
+                    <div className="ml-3 sm:ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 truncate">
+                          Total Expenses
+                        </dt>
+                        <dd className="text-sm sm:text-lg font-medium text-gray-900 dark:text-gray-100">
+                          {formatCurrency(totalExpenses)}
+                        </dd>
+                      </dl>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="bg-white dark:bg-gray-900 overflow-hidden shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
               <div className="p-4 sm:p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
+                    <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600 dark:text-gray-400" />
                   </div>
                   <div className="ml-3 sm:ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
+                      <dt className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 truncate">
                         This Month
                       </dt>
-                      <dd className="text-sm sm:text-lg font-medium text-gray-900">
+                      <dd className="text-sm sm:text-lg font-medium text-gray-900 dark:text-gray-100">
                         {formatCurrency(filteredMonthlyExpenses)}
                       </dd>
                     </dl>
@@ -265,18 +279,18 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="bg-white dark:bg-gray-900 overflow-hidden shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
               <div className="p-4 sm:p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
+                    <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600 dark:text-gray-400" />
                   </div>
                   <div className="ml-3 sm:ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
+                      <dt className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 truncate">
                         Categories
                       </dt>
-                      <dd className="text-sm sm:text-lg font-medium text-gray-900">
+                      <dd className="text-sm sm:text-lg font-medium text-gray-900 dark:text-gray-100">
                         {filteredCategories}
                       </dd>
                     </dl>
@@ -285,11 +299,11 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="bg-white dark:bg-gray-900 overflow-hidden shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
               <div className="p-4 sm:p-5">
                 <Link
                   href="/expenses/create"
-                  className="flex flex-col sm:flex-row items-center justify-center w-full h-full text-blue-600 hover:text-blue-800 space-y-1 sm:space-y-0 sm:space-x-2"
+                  className="flex flex-col sm:flex-row items-center justify-center w-full h-full text-blue-600 dark:text-blue-400 hover:opacity-90 space-y-1 sm:space-y-0 sm:space-x-2"
                 >
                   <PlusCircle className="h-6 w-6 sm:h-8 sm:w-8" />
                   <span className="text-sm sm:text-base font-medium">Add Expense</span>
@@ -297,73 +311,87 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
+          </RevealOnScroll>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <TrendingUp className="h-6 w-6 text-gray-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Filtered Total
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {formatCurrency(filteredTotal)}
-                    </dd>
-                  </dl>
+          <RevealOnScroll>
+            <div className="bg-white dark:bg-gray-900 overflow-hidden shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <TrendingUp className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-600 dark:text-gray-400 truncate">
+                        Filtered Total
+                      </dt>
+                      <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        {formatCurrency(filteredTotal)}
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </RevealOnScroll>
 
           {/* Analytics Section */}
           {expenses.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <SpendingChart expenses={filteredExpenses} categories={categories} />
-              <MonthlyTrend expenses={filteredExpenses} />
-            </div>
+            <RevealOnScroll>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <SpendingChart expenses={filteredExpenses} categories={categories} />
+                <MonthlyTrend expenses={filteredExpenses} dateRange={dateRange} />
+              </div>
+            </RevealOnScroll>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white shadow overflow-hidden sm:rounded-md">
-              <div className="px-4 py-5 sm:px-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  Recent Expenses
-                </h3>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                  Your latest expense entries
-                </p>
-              </div>
-              <div className="border-t border-gray-200">
-                {recentExpenses.length === 0 ? (
-                  <div className="px-4 py-5 sm:p-6 text-center text-gray-500">
-                    No expenses yet. <Link href="/expenses/create" className="text-blue-600 hover:text-blue-800">Add your first expense</Link>
-                  </div>
-                ) : (
-                  <ul className="divide-y divide-gray-200">
-                    {recentExpenses.map((expense) => {
-                      const category = categories.find(c => c.id === expense.categoryId);
-                      return (
-                        <li key={expense.id} className="px-4 py-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">{expense.description}</p>
-                              <p className="text-sm text-gray-500">{category?.name} • {new Date(expense.expenseDate).toLocaleDateString()}</p>
+          <RevealOnScroll>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <div className="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-700 rounded-xl">
+                <div className="px-4 py-5 sm:px-6">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">
+                    Recent Expenses
+                  </h3>
+                  <p className="mt-1 max-w-2xl text-sm text-gray-600 dark:text-gray-400">
+                    Your latest expense entries
+                  </p>
+                </div>
+                <div className="border-t border-gray-200 dark:border-gray-700">
+                  {recentExpenses.length === 0 ? (
+                    <div className="px-4 py-5 sm:p-6 text-center text-gray-600 dark:text-gray-400">
+                      No expenses yet.{' '}
+                      <Link href="/expenses/create" className="text-blue-600 dark:text-blue-400 hover:opacity-90">
+                        Add your first expense
+                      </Link>
+                    </div>
+                  ) : (
+                    <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                      {recentExpenses.map((expense) => {
+                        const category = categories.find(c => c.id === expense.categoryId);
+                        return (
+                          <li key={expense.id} className="px-4 py-4">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{expense.description}</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  {category?.name} • {new Date(expense.expenseDate).toLocaleDateString()}
+                                </p>
+                              </div>
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {formatCurrency(expense.amount)}
+                              </p>
                             </div>
-                            <p className="text-sm font-medium text-gray-900">{formatCurrency(expense.amount)}</p>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
               </div>
+              
+              <TopCategories expenses={expenses} categories={categories} />
             </div>
-            
-            <TopCategories expenses={expenses} categories={categories} />
-          </div>
+          </RevealOnScroll>
         </div>
       </div>
     </div>

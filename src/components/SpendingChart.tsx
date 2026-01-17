@@ -1,6 +1,6 @@
 'use client'
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 
 interface SpendingChartProps {
   expenses: any[]
@@ -24,9 +24,11 @@ export default function SpendingChart({ expenses, categories }: SpendingChartPro
 
   if (categorySpending.length === 0) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Spending by Category</h3>
-        <div className="text-center text-gray-500 py-8">
+      <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+          Spending by Category
+        </h3>
+        <div className="text-center text-gray-600 dark:text-gray-400 py-8">
           No expenses to display
         </div>
       </div>
@@ -44,10 +46,10 @@ export default function SpendingChart({ expenses, categories }: SpendingChartPro
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
-        <div className="bg-white p-3 border rounded shadow">
-          <p className="font-medium">{data.name}</p>
-          <p className="text-blue-600">{formatCurrency(data.value)}</p>
-          <p className="text-gray-500 text-sm">{data.count} expenses</p>
+        <div className="bg-white dark:bg-gray-900 p-3 border border-gray-200 dark:border-gray-700 rounded shadow-sm">
+          <p className="font-medium text-gray-900 dark:text-gray-100">{data.name}</p>
+          <p className="text-blue-600 dark:text-blue-400">{formatCurrency(data.value)}</p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">{data.count} expenses</p>
         </div>
       )
     }
@@ -55,8 +57,10 @@ export default function SpendingChart({ expenses, categories }: SpendingChartPro
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">Spending by Category</h3>
+    <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+        Spending by Category
+      </h3>
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>

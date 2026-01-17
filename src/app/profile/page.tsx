@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { User, Save, ArrowLeft, Eye, EyeOff } from 'lucide-react'
+import ThemeToggle from '@/components/ThemeToggle'
 
 export default function Profile() {
   const [user, setUser] = useState<any>(null)
@@ -114,26 +115,27 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <nav className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-gray-900">Cheqa</Link>
+              <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-gray-100">Cheqa</Link>
             </div>
             <div className="flex items-center space-x-4">
-              <Link href="/expenses" className="text-gray-700 hover:text-gray-900">
+              <Link href="/expenses" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100">
                 Expenses
               </Link>
-              <Link href="/categories" className="text-gray-700 hover:text-gray-900">
+              <Link href="/categories" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100">
                 Categories
               </Link>
-              <Link href="/payment-methods" className="text-gray-700 hover:text-gray-900">
+              <Link href="/payment-methods" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100">
                 Payment Methods
               </Link>
-              <Link href="/profile" className="text-blue-600 font-medium">
+              <Link href="/profile" className="text-blue-600 dark:text-blue-400 font-medium">
                 Profile
               </Link>
+              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -142,24 +144,24 @@ export default function Profile() {
       <div className="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="mb-6">
-            <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+            <Link href="/" className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:opacity-90">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
             </Link>
           </div>
 
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+          <div className="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-700 rounded-xl">
             <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 flex items-center">
-                <User className="h-5 w-5 mr-2" />
+              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100 flex items-center">
+                <User className="h-5 w-5 mr-2 text-gray-600 dark:text-gray-400" />
                 Profile Settings
               </h3>
-              <p className="mt-1 max-w-2xl text-sm text-gray-500">
+              <p className="mt-1 max-w-2xl text-sm text-gray-600 dark:text-gray-400">
                 Update your personal information and password
               </p>
             </div>
 
-            <div className="border-t border-gray-200">
+            <div className="border-t border-gray-200 dark:border-gray-700">
               <form onSubmit={handleSubmit} className="px-4 py-5 sm:p-6">
                 {error && (
                   <div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -175,7 +177,7 @@ export default function Profile() {
 
                 <div className="space-y-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
                       Full Name
                     </label>
                     <input
@@ -184,12 +186,12 @@ export default function Profile() {
                       id="name"
                       value={formData.name}
                       onChange={handleChange}
-                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-800"
+                      className="mt-1 w-full px-4 py-3 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
                       Email Address
                     </label>
                     <input
@@ -198,17 +200,17 @@ export default function Profile() {
                       id="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-800"
+                      className="mt-1 w-full px-4 py-3 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                       required
                     />
                   </div>
 
                   <div className="border-t pt-6">
-                    <h4 className="text-md font-medium text-gray-900 mb-4">Change Password</h4>
+                    <h4 className="text-md font-medium text-gray-900 dark:text-gray-100 mb-4">Change Password</h4>
                     
                     <div className="space-y-4">
                       <div>
-                        <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
+                        <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
                           Current Password
                         </label>
                         <div className="mt-1 relative">
@@ -218,12 +220,12 @@ export default function Profile() {
                             id="currentPassword"
                             value={formData.currentPassword}
                             onChange={handleChange}
-                            className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border pr-10 text-gray-800"
+                            className="block w-full pr-10 pl-4 py-3 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                           />
                           <button
                             type="button"
                             onClick={() => setShowPasswords(!showPasswords)}
-                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 dark:text-gray-400"
                           >
                             {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
@@ -231,7 +233,7 @@ export default function Profile() {
                       </div>
 
                       <div>
-                        <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+                        <label htmlFor="newPassword" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
                           New Password
                         </label>
                         <input
@@ -240,12 +242,12 @@ export default function Profile() {
                           id="newPassword"
                           value={formData.newPassword}
                           onChange={handleChange}
-                          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-800"
+                          className="mt-1 w-full px-4 py-3 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         />
                       </div>
 
                       <div>
-                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
                           Confirm New Password
                         </label>
                         <input
@@ -254,18 +256,18 @@ export default function Profile() {
                           id="confirmPassword"
                           value={formData.confirmPassword}
                           onChange={handleChange}
-                          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border text-gray-800"
+                          className="mt-1 w-full px-4 py-3 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         />
                       </div>
                     </div>
                   </div>
 
                   <div className="flex space-x-3">
-                    <button
-                      type="submit"
-                      disabled={saving}
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-                    >
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                  >
                       <Save className="h-4 w-4 mr-2" />
                       {saving ? 'Saving...' : 'Save Changes'}
                     </button>

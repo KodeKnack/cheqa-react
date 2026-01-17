@@ -2,20 +2,97 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111827;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #0f172a;
+  --foreground: #f3f4f6;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+.page-stagger > * {
+  animation: fade-up 0.5s ease both;
+}
+
+.page-stagger > *:nth-child(2) {
+  animation-delay: 50ms;
+}
+
+.page-stagger > *:nth-child(3) {
+  animation-delay: 100ms;
+}
+
+.page-stagger > *:nth-child(4) {
+  animation-delay: 150ms;
+}
+
+.page-stagger > *:nth-child(5) {
+  animation-delay: 200ms;
+}
+
+.page-stagger > *:nth-child(6) {
+  animation-delay: 250ms;
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}
+
+button {
+  transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease, color 200ms ease;
+}
+
+button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.08);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Fix for select dropdowns */
@@ -28,6 +105,10 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+.dark select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23d1d5db' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
 }
 
 select:focus {
