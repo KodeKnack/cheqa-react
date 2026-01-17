@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "@/components/Providers";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import "./globals.css";
@@ -7,16 +6,6 @@ import MobileNav from "@/components/MobileNav";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Cheqa - Expense Tracker",
@@ -47,7 +36,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased pb-16 sm:pb-0 flex flex-col min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100`}
+        className="antialiased pb-16 sm:pb-0 flex flex-col min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
       >
         <ThemeProvider>
           <Providers>

@@ -18,6 +18,10 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'Current password required' }, { status: 400 })
       }
 
+      if (!user.password) {
+        return NextResponse.json({ error: 'Password not set for this account' }, { status: 400 })
+      }
+
       const isValid = await bcrypt.compare(currentPassword, user.password)
       if (!isValid) {
         return NextResponse.json({ error: 'Current password is incorrect' }, { status: 400 })
