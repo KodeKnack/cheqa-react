@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { PlusCircle, TrendingUp, Calendar, CreditCard, User, LogOut } from 'lucide-react'
+import { signOut } from 'next-auth/react'
 import { useStore } from '@/lib/store'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react';
-import SpendingChart from '@/components/SpendingChart';
-import MonthlyTrend from '@/components/MonthlyTrend';
-import TopCategories from '@/components/TopCategories';
-import DateRangePicker from '@/components/DateRangePicker';
+import { useEffect, useState } from 'react'
+import SpendingChart from '@/components/SpendingChart'
+import MonthlyTrend from '@/components/MonthlyTrend'
+import TopCategories from '@/components/TopCategories'
+import DateRangePicker from '@/components/DateRangePicker'
 
 export default function Dashboard() {
   const { expenses, categories } = useStore();
@@ -49,8 +50,7 @@ export default function Dashboard() {
   };
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/auth/signin');
+    await signOut({ callbackUrl: '/auth/signin' })
   };
 
   if (loading) {

@@ -1,22 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { signUp } from '@/lib/auth'
-import { cookies } from 'next/headers'
+import bcrypt from 'bcryptjs'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
     const { email, password, name } = await request.json()
 
-    const result = await signUp(email, password, name)
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
+    }
 
-    const cookieStore = await cookies()
-    cookieStore.set('auth-token', result.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 7 days
+    const existing = await prisma.user.findUnique({ where: { email } })
+    if (existing) {
+      return NextResponse.json({ error: 'User already exists' }, { status: 400 })
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12)
+    const user = await prisma.user.create({
+      data: { email, password: hashedPassword, name }
     })
 
-    return NextResponse.json({ user: { id: result.user.id, email: result.user.email, name: result.user.name } })
+    return NextResponse.json({ user: { id: user.id, email: user.email, name: user.name } })
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal server error' }, { status: 400 })
   }
